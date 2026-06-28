@@ -13,7 +13,7 @@ def footer_home():
 def footer_dashboard():
     st.markdown("""
         <div style="margin-top:2rem; display:flex; gap:6px; justify-content:center; items-align:center">
-        <p style="font-weight:bold; color:black;"> JioPulse · Built with ❤️ for educators everywhere </p>
+        <p style="font-weight:bold; color:#F5EEF0;"> JioPulse · Built with ❤️ for educators everywhere </p>
         </div>
                 
                 """, unsafe_allow_html=True)

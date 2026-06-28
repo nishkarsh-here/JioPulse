@@ -16,6 +16,10 @@ def style_background_home():
                     padding:2.5rem !important;
                     border-radius: 5rem !important;
                     }
+
+                .stApp div[data-testid="stColumn"] [data-testid="stHeading"]{
+                    color:#1A0E13 !important;
+                    }
         </style>  
 
                 """
@@ -28,10 +32,14 @@ def style_background_dashboard():
         <style>
 
                 .stApp {
-                    background: #FCE4E8 !important;
+                    background: #181318 !important;
                 }
 
-        </style>  
+                .stApp [data-testid="stHeading"]{
+                    color:#F5EEF0 !important;
+                }
+
+        </style>
 
                 """
             ,unsafe_allow_html=True)
@@ -97,7 +105,7 @@ def style_base_layout():
 
             button[kind="tertiary"]{
                 border-radius: 1.5rem !important;
-                background-color: black !important;
+                background-color: #33262E !important;
                 color: white !important;
                 padding: 10px 20px !important;
                 border: none !important;
