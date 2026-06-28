@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Secrets & local config
+.streamlit/secrets.toml
+.env
+*.local
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Vercel / Node
+.vercel/
+node_modules/
+
+# Logs & caches
+*.log
+.cache/
+.pytest_cache/
