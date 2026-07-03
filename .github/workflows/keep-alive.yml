@@ -1,0 +1,21 @@
+name: Keep Streamlit app awake
+
+on:
+  schedule:
+    # Runs every 10 minutes. Streamlit Community Cloud puts apps to sleep
+    # after a period of inactivity, so we ping it periodically to keep it awake.
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping app
+        run: |
+          status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://jiopulse.streamlit.app")
+          echo "Response status: $status"
+          if [ "$status" -ge 400 ]; then
+            echo "App did not respond successfully."
+            exit 1
+          fi
