@@ -1,6 +1,14 @@
 import streamlit as st
 
 
+def theme_toggle_button(key):
+    theme = st.session_state.get("theme", "dark")
+    icon = ':material/light_mode:' if theme == 'dark' else ':material/dark_mode:'
+    if st.button("", type='tertiary', icon=icon, key=key, width='stretch', help="Switch theme"):
+        st.session_state.theme = "light" if theme == "dark" else "dark"
+        st.rerun()
+
+
 def header_home():
 
     logo_url = "https://i.ibb.co/YTYGn5qV/logo.png"

@@ -2,7 +2,7 @@ import streamlit as st
 
 from src.ui.base_layout import style_background_dashboard, style_base_layout
 
-from src.components.header import header_dashboard
+from src.components.header import header_dashboard, theme_toggle_button
 from src.components.footer import footer_dashboard
 from PIL import Image
 import numpy as np
@@ -25,10 +25,14 @@ def student_dashboard():
     with c1:
         header_dashboard()
     with c2:
-        st.subheader(f"""Welcome, {student_data['name']} """)
-        if st.button("Logout", type='secondary', key='loginbackbtn', shortcut="control+backspace"):
+        wc1, wc2 = st.columns([5, 1], vertical_alignment='center')
+        with wc1:
+            st.subheader(f"""Welcome, {student_data['name']} """)
+        with wc2:
+            theme_toggle_button(key='theme_toggle_student')
+        if st.button("Logout", type='secondary', key='loginbackbtn', shortcut="control+backspace", width='stretch'):
             st.session_state['is_logged_in'] = False
-            del st.session_state.student_data 
+            del st.session_state.student_data
             st.rerun()
         if st.button("Ask JioPulse AI", type='primary', key='open_ai_student', width='stretch', icon=':material/auto_awesome:'):
             st.session_state.ai_assistant_open = True
@@ -73,8 +77,8 @@ def student_dashboard():
 
 
         stats = stats_map.get(sid,{"total":0, "attended": 0} )
-        def unenroll_button():
-                if st.button("Unenroll from tihs course", type='tertiary', width='stretch', icon=':material/delete_forever:'):
+        def unenroll_button(sid=sid, sub=sub):
+                if st.button("Unenroll from this course", type='tertiary', width='stretch', icon=':material/delete_forever:', key=f"unenroll_{sid}"):
                     unenroll_student_to_subject(student_id, sid)
                     st.toast(f'Unenrolled from {sub['name']} successfully!')
                     st.rerun()

@@ -17,9 +17,9 @@ def check_teacher_exists(username):
 
 
 
-def create_teacher(username, password, name):
+def create_teacher(username, password, name, email):
 
-    data = { "username" : username, "password": hash_pass(password), "name": name}
+    data = { "username" : username, "password": hash_pass(password), "name": name, "email": email}
     response = supabase.table("teachers").insert(data).execute()
     return response.data
 
@@ -31,6 +31,40 @@ def teacher_login(username, password):
         if check_pass(password, teacher['password']):
             return teacher
     return None
+
+
+def store_reset_token(email, token, expires_at):
+    response = supabase.table("teachers").update(
+        {"reset_token": token, "reset_token_expires": expires_at}
+    ).eq("email", email).execute()
+    return len(response.data) > 0
+
+
+def verify_reset_token(email, token):
+    response = supabase.table("teachers").select("teacher_id, reset_token, reset_token_expires").eq("email", email).execute()
+    if not response.data:
+        return False
+
+    teacher = response.data[0]
+    if not teacher.get("reset_token") or teacher["reset_token"] != token:
+        return False
+
+    expires_at = teacher.get("reset_token_expires")
+    if not expires_at:
+        return False
+
+    from datetime import datetime, timezone
+    if datetime.fromisoformat(expires_at) < datetime.now(timezone.utc):
+        return False
+
+    return True
+
+
+def reset_teacher_password(email, new_password):
+    response = supabase.table("teachers").update(
+        {"password": hash_pass(new_password), "reset_token": None, "reset_token_expires": None}
+    ).eq("email", email).execute()
+    return len(response.data) > 0
 
 
 def get_all_students():
@@ -47,6 +81,22 @@ def create_subject(subject_code, name, section, teacher_id):
     data = {"subject_code": subject_code, "name": name, "section": section, "teacher_id": teacher_id}
     response = supabase.table("subjects").insert(data).execute()
     return response.data
+
+
+def subject_code_exists(subject_code):
+    response = supabase.table("subjects").select("subject_id").eq("subject_code", subject_code).execute()
+    return len(response.data) > 0
+
+
+def get_all_subjects():
+    response = supabase.table('subjects').select("subject_id, subject_code, name, section, teachers(name)").execute()
+    return response.data
+
+
+def get_subject_roster(subject_id):
+    response = supabase.table('subject_students').select("*, students(*)").eq('subject_id', subject_id).execute()
+    return response.data
+
 
 def get_teacher_subjects(teacher_id):
     response = supabase.table('subjects').select("*, subject_students(count), attendance_logs(timestamp)").eq("teacher_id", teacher_id).execute()

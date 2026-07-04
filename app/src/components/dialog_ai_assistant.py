@@ -40,8 +40,9 @@ def ai_assistant_dialog(role):
 
     if not ai_is_configured():
         st.warning(
-            "The AI assistant needs an OpenAI key. Add **OPENAI_API_KEY** to "
-            "`.streamlit/secrets.toml` (or your environment) to turn it on."
+            "The AI assistant needs a Gemini key. Add **GEMINI_API_KEY** to "
+            "`.streamlit/secrets.toml` (or your environment) to turn it on. "
+            "You can get a free key from Google AI Studio."
         )
         if st.button("Close", width="stretch"):
             _close()
@@ -57,7 +58,13 @@ def ai_assistant_dialog(role):
                 answer = result.get("answer") or "I couldn't find an answer to that."
                 trace = result.get("trace")
             except Exception as exc:
-                answer = f"I couldn't reach the AI service just now ({exc})."
+                if "429" in str(exc) or "rate" in str(exc).lower() or "quota" in str(exc).lower():
+                    answer = (
+                        "JioPulse AI is getting a lot of questions right now (rate limit reached). "
+                        "Please try again in a minute."
+                    )
+                else:
+                    answer = f"I couldn't reach the AI service just now ({exc})."
                 trace = None
         history.append({"role": "assistant", "content": answer, "trace": trace})
 

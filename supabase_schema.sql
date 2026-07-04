@@ -48,3 +48,13 @@ alter table students          disable row level security;
 alter table subjects          disable row level security;
 alter table subject_students  disable row level security;
 alter table attendance_logs   disable row level security;
+
+-- Prevent two subjects from sharing the same join code.
+create unique index if not exists subjects_subject_code_idx on subjects(subject_code);
+
+-- Teacher email + password-reset support (run against an already-existing
+-- teachers table too - these statements are safe to re-run).
+alter table teachers add column if not exists email text;
+alter table teachers add column if not exists reset_token text;
+alter table teachers add column if not exists reset_token_expires timestamptz;
+create unique index if not exists teachers_email_idx on teachers(email);

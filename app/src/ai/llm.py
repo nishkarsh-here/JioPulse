@@ -1,27 +1,30 @@
-"""Thin wrapper around the OpenAI client used by the JioPulse assistant.
+"""Thin wrapper around the Gemini client used by the JioPulse assistant.
 
-Keeps model names and credential lookup in one place so the rest of the
-codebase never talks to the SDK directly.
+Google's Gemini API exposes an OpenAI-compatible endpoint, so we keep using
+the ``openai`` SDK and just point it at Gemini's base URL. Keeps model names
+and credential lookup in one place so the rest of the codebase never talks
+to the SDK directly.
 """
 import os
 import streamlit as st
 
-CHAT_MODEL = "gpt-4o-mini"
-EMBED_MODEL = "text-embedding-3-small"
+CHAT_MODEL = "gemini-2.0-flash"
+EMBED_MODEL = "text-embedding-004"
+GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
 
 def get_api_key():
     """Read the key from Streamlit secrets first, then the environment."""
     key = None
     try:
-        key = st.secrets.get("OPENAI_API_KEY")
+        key = st.secrets.get("GEMINI_API_KEY")
     except Exception:
         key = None
-    return key or os.environ.get("OPENAI_API_KEY")
+    return key or os.environ.get("GEMINI_API_KEY")
 
 
 def ai_is_configured():
-    """True when an OpenAI key is available, so the UI can degrade gracefully."""
+    """True when a Gemini key is available, so the UI can degrade gracefully."""
     return bool(get_api_key())
 
 
@@ -31,8 +34,8 @@ def get_client():
 
     key = get_api_key()
     if not key:
-        raise RuntimeError("OPENAI_API_KEY is not set.")
-    return OpenAI(api_key=key)
+        raise RuntimeError("GEMINI_API_KEY is not set.")
+    return OpenAI(api_key=key, base_url=GEMINI_BASE_URL)
 
 
 def chat(messages, tools=None, model=CHAT_MODEL, temperature=0.2):
