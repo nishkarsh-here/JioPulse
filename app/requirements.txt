@@ -1,5 +1,9 @@
+# Use CPU-only PyTorch (no GPU on Streamlit) -> ~10x smaller install, faster cold starts
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
+
 streamlit
-# Utilitites 
+# Utilitites
 numpy
 pandas
 
